@@ -1,41 +1,31 @@
 package com.middleware.api.javaapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class TodoService {
-    private final TodoRepository todoRepository;
-
-    @Autowired
-    public TodoService(TodoRepository todoRepository) {
-        this.todoRepository = todoRepository;
-    }
 
     public Todo create(Todo todo) {
-        return todoRepository.save(todo);
+        return todo;
     }
 
     public List<Todo> getAll() {
-        return todoRepository.findAll();
+        return null;
     }
 
     public Todo getByName(String name) {
-        return todoRepository.findByName(name);
+        return null;
     }
 
     public void deleteByName(String name) {
-        todoRepository.deleteByName(name);
+        return;
     }
 
     public Todo updateByName(String name, Todo todo) {
-        Todo todoToUpdate = todoRepository.findByName(name);
-        todoToUpdate.setName(todo.getName());
-        todoToUpdate.setDeadline(todo.getDeadline());
-        todoToUpdate.setLabel(todo.getLabel());
-
-        return todoRepository.save(todoToUpdate);
+        return todo;
     }
 }
