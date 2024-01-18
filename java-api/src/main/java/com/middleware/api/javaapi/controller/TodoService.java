@@ -26,5 +26,16 @@ public class TodoService {
         return todoRepository.findByName(name);
     }
 
-    // Other methods for update and delete
+    public void deleteByName(String name) {
+        todoRepository.deleteByName(name);
+    }
+
+    public Todo updateByName(String name, Todo todo) {
+        Todo todoToUpdate = todoRepository.findByName(name);
+        todoToUpdate.setName(todo.getName());
+        todoToUpdate.setDeadline(todo.getDeadline());
+        todoToUpdate.setLabel(todo.getLabel());
+
+        return todoRepository.save(todoToUpdate);
+    }
 }

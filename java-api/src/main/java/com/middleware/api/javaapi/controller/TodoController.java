@@ -29,14 +29,14 @@ public class TodoController {
     public Todo createTodo(@RequestBody Todo todo) {
         return todoService.create(todo);
     }
-    // Implement other methods for update and delete
 
     @PostMapping("/update/{name}")
     public Todo updateTodoByName(@PathVariable String name, @RequestBody Todo todo) {
-        Todo todoToUpdate = todoService.getByName(name);
-        todoToUpdate.setName(todo.getName());
-        todoToUpdate.setDeadline(todo.getDeadline());
-        todoToUpdate.setLabel(todo.getLabel());
-        return todoService.create(todoToUpdate);
+        return todoService.updateByName(name, todo);
+    }
+
+    @DeleteMapping("/delete/{name}")
+    public void deleteTodoByName(@PathVariable String name) {
+        todoService.deleteByName(name);
     }
 }
