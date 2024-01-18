@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TodoPriority } from '@prisma/client';
-import { IsDate, IsEnum, IsNotEmpty, IsString, isDate } from 'class-validator';
+import { IsDateString, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 export class TodoDTO {
   @ApiProperty()
@@ -14,7 +14,7 @@ export class TodoDTO {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsDate()
+  @IsDateString()
   deadline: Date;
 
   @ApiProperty()

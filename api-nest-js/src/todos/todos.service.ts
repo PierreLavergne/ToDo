@@ -39,8 +39,39 @@ export class TodosService {
           name: name,
         },
       })
-      .then((todos: Todo) => {
-        return todos;
+      .then((todo: Todo) => {
+        return todo;
+      })
+      .catch((err: PrismaClientKnownRequestError) => {
+        throw err;
+      });
+  }
+
+  async updateById(id: string, todo: TodoDTO): Promise<Todo> {
+    return this.prisma.todo
+      .update({
+        where: {
+          id: id,
+        },
+        data: todo,
+      })
+      .then((todo: Todo) => {
+        return todo;
+      })
+      .catch((err: PrismaClientKnownRequestError) => {
+        throw err;
+      });
+  }
+
+  async deleteById(id: string): Promise<Todo> {
+    return this.prisma.todo
+      .delete({
+        where: {
+          id: id,
+        },
+      })
+      .then((todo: Todo) => {
+        return todo;
       })
       .catch((err: PrismaClientKnownRequestError) => {
         throw err;

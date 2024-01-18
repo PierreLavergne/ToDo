@@ -1,8 +1,18 @@
-import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { TodoDTO } from './dto/todo.dto';
 import { Todo } from '@prisma/client';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Todos')
 @Controller('todos')
 export class TodosController {
   constructor(private readonly todosService: TodosService) {}
@@ -13,16 +23,25 @@ export class TodosController {
   }
 
   @Get(':name')
-  async getTodoByName(): Promise<any> {}
+  async getTodoByName(@Param('name') name: string): Promise<Todo> {
+    return this.todosService.getByName(name);
+  }
 
   @Post()
   async createTodo(@Body() todo: TodoDTO): Promise<Todo> {
     return this.todosService.create(todo);
   }
 
-  @Delete(':name')
-  async deleteTodo(): Promise<any> {}
+  @Delete(':id')
+  async deleteTodo(@Param('id') id: string): Promise<Todo> {
+    return this.todosService.deleteById(id);
+  }
 
-  @Put()
-  async updateTodo(): Promise<any> {}
+  @Put(':id')
+  async updateTodo(
+    @Param('id') id: string,
+    @Body() todo: TodoDTO,
+  ): Promise<Todo> {
+    return this.todosService.updateById(id, todo);
+  }
 }
