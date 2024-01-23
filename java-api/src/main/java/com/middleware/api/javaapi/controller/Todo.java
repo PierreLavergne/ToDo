@@ -1,23 +1,22 @@
 package com.middleware.api.javaapi.controller;
+
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import org.hibernate.annotations.UuidGenerator;
+
 import java.util.Date;
 
 @Entity
 public class Todo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private String uuid;
 
     private String name;
     private String description;
     private Date deadline;
     private TodoPriority label;
-
-    public Todo() {
-    }
 
     public Todo(String name, String description, Date deadline, TodoPriority label) {
         this.name = name;
@@ -26,15 +25,15 @@ public class Todo {
         this.label = label;
     }
 
-    public Long getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return description;
     }
 
@@ -71,7 +70,7 @@ public class Todo {
     @Override
     public String toString() {
         return "Todo{" +
-                "id=" + id +
+                "id=" + uuid +
                 ", name='" + name +
                 ", description='" + description +
                 ", deadline='" + deadline +

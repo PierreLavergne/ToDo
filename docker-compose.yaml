@@ -1,9 +1,9 @@
 version: '3.8'
 services:
-  api:
+  nest-api:
     build:
       dockerfile: Dockerfile
-      context: .
+      context: ./nest-api
       target: development
     env_file:
       - .env
@@ -13,11 +13,20 @@ services:
       - .:/usr/src/app
     command: npm run start:dev
     ports:
-      - ${API_PORT}:${API_PORT}
+      - ${NEST_API_PORT}:8080
     depends_on:
-      - postgres
+      - psql-database
 
-  postgres:
+  java-api:
+    build:
+      dockerfile: Dockerfile
+      context: ./java-api
+    ports:
+      - ${JAVA_API_PORT}:8080
+    depends_on:
+      - psql-database
+
+  psql-database:
     image: postgres:16.0
     restart: always
     environment:
@@ -27,9 +36,9 @@ services:
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
-      - oneID:/var/lib/postgresql/data
+      - todos:/var/lib/postgresql/data
 
 volumes:
-  oneID:
+  todos:
 
 

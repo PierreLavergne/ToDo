@@ -1,20 +1,25 @@
 package com.middleware.api.javaapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @Service
 public class TodoService {
+    private final TodoRepository todoRepository;
+
+    @Autowired
+    public TodoService(TodoRepository todoRepository) {
+        this.todoRepository = todoRepository;
+    }
 
     public Todo create(Todo todo) {
         return todo;
     }
 
-    public List<Todo> getAll() {
-        return null;
+    public Iterable<Todo> getAll() {
+        return todoRepository.findAll();
     }
 
     public Todo getByName(String name) {
