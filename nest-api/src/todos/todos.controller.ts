@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -11,6 +12,7 @@ import { TodosService } from './todos.service';
 import { TodoDTO } from './dto/todo.dto';
 import { Todo } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
+import { UpdateTodoDTO } from './dto/update-todo.dto';
 
 @ApiTags('Todos')
 @Controller('todos')
@@ -22,26 +24,23 @@ export class TodosController {
     return this.todosService.getAll();
   }
 
-  @Get(':name')
-  async getTodoByName(@Param('name') name: string): Promise<Todo> {
-    return this.todosService.getByName(name);
-  }
-
   @Post()
   async createTodo(@Body() todo: TodoDTO): Promise<Todo> {
     return this.todosService.create(todo);
   }
 
-  @Delete(':id')
-  async deleteTodo(@Param('id') id: string): Promise<Todo> {
-    return this.todosService.deleteById(id);
+  @Put()
+  async updateTodo(@Body() todo: UpdateTodoDTO): Promise<Todo> {
+    return this.todosService.update(todo);
   }
 
-  @Put(':id')
-  async updateTodo(
-    @Param('id') id: string,
-    @Body() todo: TodoDTO,
-  ): Promise<Todo> {
-    return this.todosService.updateById(id, todo);
+  @Get(':name')
+  async getTodoByName(@Param('name') name: string): Promise<Todo> {
+    return this.todosService.getByName(name);
+  }
+
+  @Delete(':name')
+  async deleteTodo(@Param('name') name: string): Promise<string> {
+    return this.todosService.deleteByName(name);
   }
 }

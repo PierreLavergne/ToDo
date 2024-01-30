@@ -1,23 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Todo } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TodoDTO } from './dto/todo.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { UpdateTodoDTO } from './dto/update-todo.dto';
 
 @Injectable()
 export class TodosService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(todoDto: TodoDTO): Promise<Todo> {
+  async create(todo: TodoDTO): Promise<Todo> {
     return this.prisma.todo
       .create({
-        data: todoDto,
+        data: todo,
       })
       .then((todo: Todo) => {
         return todo;
       })
       .catch((err: PrismaClientKnownRequestError) => {
-        throw err;
+        if (err.code === 'P2002') {
+          throw new BadRequestException(`${todo.name} already exist`);
+        }
+        throw new InternalServerErrorException();
       });
   }
 
@@ -43,15 +52,18 @@ export class TodosService {
         return todo;
       })
       .catch((err: PrismaClientKnownRequestError) => {
-        throw err;
+        if (err.code === 'P2025') {
+          throw new BadRequestException(`${name} do not exist`);
+        }
+        throw new InternalServerErrorException();
       });
   }
 
-  async updateById(id: string, todo: TodoDTO): Promise<Todo> {
+  async update(todo: UpdateTodoDTO): Promise<Todo> {
     return this.prisma.todo
       .update({
         where: {
-          id: id,
+          id: todo.id,
         },
         data: todo,
       })
@@ -59,22 +71,32 @@ export class TodosService {
         return todo;
       })
       .catch((err: PrismaClientKnownRequestError) => {
-        throw err;
+        if (err.code === 'P2002') {
+          throw new BadRequestException(`${todo.name} already exist`);
+        } else if (err.code === 'P2023') {
+          throw new BadRequestException(`Invalid ID: ${todo.id}`);
+        } else if (err.code === 'P2025') {
+          throw new BadRequestException(`${todo.name} do not exist`);
+        }
+        throw new InternalServerErrorException();
       });
   }
 
-  async deleteById(id: string): Promise<Todo> {
+  async deleteByName(name: string): Promise<string> {
     return this.prisma.todo
       .delete({
         where: {
-          id: id,
+          name: name,
         },
       })
-      .then((todo: Todo) => {
-        return todo;
+      .then(() => {
+        return 'OK';
       })
       .catch((err: PrismaClientKnownRequestError) => {
-        throw err;
+        if (err.code === 'P2025') {
+          throw new BadRequestException(`${name} do not exist`);
+        }
+        throw new InternalServerErrorException();
       });
   }
 }

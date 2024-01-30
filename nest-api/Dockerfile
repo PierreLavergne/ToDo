@@ -12,7 +12,7 @@ RUN npm ci
 
 COPY --chown=node:node . .
 
-RUN npx prisma generate
+RUN npm run generate
 
 USER node
 
@@ -34,7 +34,9 @@ RUN npm run build
 
 ENV NODE_ENV production
 
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci && npm cache clean --force
+
+# RUN npm run migrate
 
 USER node
 
@@ -45,6 +47,8 @@ USER node
 FROM node:18-alpine3.18 As production
 
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=build /usr/src/app/package.json ./package.json
+COPY --chown=node:node --from=build /usr/src/app/src/prisma/schema.prisma ./src/prisma/schema.prisma
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
-CMD [ "node", "dist/main.js" ]
+CMD [ "npm", "run", "start:prod" ]
