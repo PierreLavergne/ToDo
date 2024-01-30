@@ -12,8 +12,8 @@ class CardTask extends StatefulWidget {
   String title;
   String description;
   LabelType label;
-  bool isDone;
   DateTime? deadline;
+  String? status;
   bool animate = true;
 
   CardTask({
@@ -21,9 +21,9 @@ class CardTask extends StatefulWidget {
     required this.title,
     required this.description,
     required this.label,
-    required this.isDone,
     required this.deadline,
     required this.animate,
+    required this.status,
   });
 
   @override
@@ -45,7 +45,7 @@ class _CardTaskState extends State<CardTask> {
         padding: const EdgeInsets.only(bottom: 8),
         child: Container(
           decoration: BoxDecoration(
-            color: widget.isDone ? AppColors.grey200 : Colors.white,
+            color: widget.status == 'Done' ? AppColors.grey200 : Colors.white,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             border: Border.all(
               color: AppColors.grey400,
@@ -71,19 +71,21 @@ class _CardTaskState extends State<CardTask> {
                       fontWeight: FontWeight.w600,
                       color: AppColors.grey800,
                       fontFamily: 'Poppins',
-                      decoration: widget.isDone
+                      decoration: widget.status == 'Done'
                           ? TextDecoration.lineThrough
                           : TextDecoration.none,
                     ),
                   ),
                   Text(
-                    widget.description,
+                    widget.description == ''
+                        ? 'No description'
+                        : widget.description,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: AppColors.grey600,
                       fontFamily: 'Poppins',
-                      decoration: widget.isDone
+                      decoration: widget.status == 'Done'
                           ? TextDecoration.lineThrough
                           : TextDecoration.none,
                     ),
@@ -188,7 +190,7 @@ class _CardTaskState extends State<CardTask> {
                 ],
               ),
               Checkbox(
-                  value: widget.isDone,
+                  value: widget.status == 'Done' ? true : false,
                   activeColor: AppColors.blue600,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
@@ -196,7 +198,7 @@ class _CardTaskState extends State<CardTask> {
                   materialTapTargetSize: MaterialTapTargetSize.padded,
                   onChanged: (value) {
                     setState(() {
-                      widget.isDone = value!;
+                      widget.status = value! ? 'Done' : 'Pending';
                     });
                   }),
             ],

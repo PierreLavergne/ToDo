@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:todo_flutter/services/get_todos.dart';
 import 'package:todo_flutter/styles/colors.dart';
@@ -31,6 +29,12 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchData(BuildContext context) async {
     todos = await getTodos();
+  }
+
+  Future<void> updateData(BuildContext context) async {
+    setState(() {
+      fetchData(context);
+    });
   }
 
   @override
@@ -74,26 +78,11 @@ class _HomePageState extends State<HomePage> {
                           context: context,
                           pageListBuilder: (modalSheetContext) {
                             return [
-                              modifyModal(modalSheetContext),
+                              modifyModal(modalSheetContext, updateData),
                             ];
                           },
                         );
                       }),
-                  const SizedBox(width: 16),
-                  Buttons(
-                    variant: Variante.secondary,
-                    size: SizeButton.md,
-                    msg: const Text("Filter",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            fontFamily: 'Poppins')),
-                    icon: const Icon(BootstrapIcons.filter_left,
-                        color: AppColors.blue700, size: 32),
-                    widthBtn: 160,
-                    onPressed: () {},
-                  ),
                 ],
               ),
               const SizedBox(height: 32),
@@ -119,9 +108,9 @@ class _HomePageState extends State<HomePage> {
                                     : todos[index]['label'] == 'Important'
                                         ? LabelType.IMPORTANT
                                         : LabelType.URGENT,
-                            isDone: false,
                             deadline: DateTime.parse(todos[index]['deadline']),
                             animate: true,
+                            status: todos[index]['status'],
                           );
                         },
                       ),
@@ -135,164 +124,268 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-SliverWoltModalSheetPage modifyModal(BuildContext context) {
+SliverWoltModalSheetPage modifyModal(
+    BuildContext context, Function updateData) {
+  return WoltModalSheetPage(
+    backgroundColor: AppColors.white,
+    enableDrag: true,
+    pageTitle: const Text(
+      'Create a new task',
+      style: TextStyle(
+          color: AppColors.grey950,
+          fontFamily: 'Poppins',
+          fontSize: 32,
+          fontWeight: FontWeight.bold),
+      textAlign: TextAlign.center,
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(32),
+      child: BodyModal(updateData: updateData),
+    ),
+  );
+}
+
+class BodyModal extends StatefulWidget {
+  final Function updateData;
+  const BodyModal({super.key, required this.updateData});
+
+  @override
+  State<BodyModal> createState() => _BodyModalState();
+}
+
+class _BodyModalState extends State<BodyModal> {
   String name = '';
   String description = '';
   DateTime? deadline;
   String label = 'Low';
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          CustomField(
-            label: 'Name',
-            value: '',
-            isPassword: false,
-            onChanged: (value) {
-              name = value;
-            },
-          ),
-          const SizedBox(height: 16),
-          CustomField(
-            label: 'Description',
-            value: '',
-            isPassword: false,
-            onChanged: (value) {
-              description = value;
-            },
-          ),
-          const SizedBox(height: 16),
-          ValueListenableBuilder<DateTime?>(
-            valueListenable: ValueNotifier(deadline),
-            builder: (context, value, child) {
-              return value == null
-                  ? Buttons(
-                      onPressed: () async {
-                        Logger().i('avant showDatePicker $value');
-                        final selectedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime(2025),
-                        );
-                        if (selectedDate != null) {
-                          deadline = selectedDate;
-                          value =
-                              selectedDate; // Cette ligne ne met pas à jour la valeur affichée, il faudrait utiliser ValueNotifier(deadline).value = selectedDate; à la place
-                        }
-                        Logger().i('après showDatePicker $value');
-                      },
-                      // ignore: unnecessary_null_comparison
-                      msg: Text(
-                          deadline == null
-                              ? 'Sélectionnez une date'
-                              : 'Date sélectionnée',
-                          style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                              fontFamily: 'Poppins')),
+  String status = "Active";
 
-                      variant: Variante.primary,
-                      size: SizeButton.md,
-                    )
-                  : Text(
-                      'Date sélectionnée : ${value.day}/${value.month}/${value.year}',
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                          fontFamily: 'Poppins'),
-                    );
-            },
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Write a title :',
+          style: TextStyle(
+            color: AppColors.grey950,
+            fontFamily: 'Poppins',
+            fontSize: 18,
           ),
-          const SizedBox(height: 16),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.blue500, width: 2),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: DropdownButton<String>(
-                isExpanded: true,
-                value: label,
-                onChanged: (String? newValue) {
+          textAlign: TextAlign.left,
+        ),
+        const SizedBox(height: 8),
+        CustomField(
+          label: 'Name',
+          value: '',
+          isPassword: false,
+          onChanged: (value) {
+            name = value;
+          },
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Write a description :',
+          style: TextStyle(
+            color: AppColors.grey950,
+            fontFamily: 'Poppins',
+            fontSize: 18,
+          ),
+          textAlign: TextAlign.left,
+        ),
+        const SizedBox(height: 8),
+        CustomField(
+          label: 'Description',
+          value: '',
+          isPassword: false,
+          onChanged: (value) {
+            description = value;
+          },
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Select the end date :',
+          style: TextStyle(
+            color: AppColors.grey950,
+            fontFamily: 'Poppins',
+            fontSize: 18,
+          ),
+          textAlign: TextAlign.left,
+        ),
+        const SizedBox(height: 8),
+        Buttons(
+          onPressed: () async {
+            final selectedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime(2025),
+            );
+            if (selectedDate != null) {
+              setState(() {
+                deadline = selectedDate;
+                deadline!.add(const Duration(hours: 23, minutes: 59));
+              });
+            }
+          },
+          msg: Text(
+              deadline == null
+                  ? 'Sélectionnez une date'
+                  : 'Date sélectionnée : ${deadline!.day}/${deadline!.month}/${deadline!.year}',
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  fontFamily: 'Poppins')),
+          variant: deadline == null ? Variante.primary : Variante.secondary,
+          size: SizeButton.md,
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Select your Label :',
+          style: TextStyle(
+            color: AppColors.grey950,
+            fontFamily: 'Poppins',
+            fontSize: 18,
+          ),
+          textAlign: TextAlign.left,
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: DropdownButton<String>(
+              isExpanded: true,
+              value: label,
+              onChanged: (String? newValue) {
+                setState(() {
                   label = newValue!;
-                },
-                items: <String>['Low', 'Medium', 'Important', 'Urgent']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                underline: Container(),
-                dropdownColor: AppColors.white,
-                icon: const Icon(BootstrapIcons.chevron_down,
-                    color: AppColors.blue500),
-                borderRadius: BorderRadius.circular(12),
-                style: const TextStyle(
-                  color: AppColors.grey950,
-                  fontFamily: 'Poppins',
-                  fontSize: 18,
-                  textBaseline: TextBaseline.ideographic,
-                )),
+                });
+              },
+              items: <String>['Low', 'Medium', 'Important', 'Urgent']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              underline: Container(),
+              dropdownColor: AppColors.white,
+              icon: const Icon(BootstrapIcons.chevron_down,
+                  color: AppColors.blue500),
+              borderRadius: BorderRadius.circular(12),
+              style: const TextStyle(
+                color: AppColors.grey950,
+                fontFamily: 'Poppins',
+                fontSize: 18,
+                textBaseline: TextBaseline.ideographic,
+              )),
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Select your Status :',
+          style: TextStyle(
+            color: AppColors.grey950,
+            fontFamily: 'Poppins',
+            fontSize: 18,
           ),
-          const SizedBox(height: 32),
-          Row(
-            children: [
-              Expanded(
-                child: Buttons(
-                  variant: Variante.secondary,
-                  size: SizeButton.md,
-                  msg: const Text("Cancel",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                          fontFamily: 'Poppins')),
-                  icon: const Icon(BootstrapIcons.x,
-                      color: AppColors.blue700, size: 32),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
+          textAlign: TextAlign.left,
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: DropdownButton<String>(
+              isExpanded: true,
+              value: status,
+              onChanged: (String? newValue) {
+                setState(() {
+                  status = newValue!;
+                });
+              },
+              items: <String>['Active', 'Pending', 'Done']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              underline: Container(),
+              dropdownColor: AppColors.white,
+              icon: const Icon(BootstrapIcons.chevron_down,
+                  color: AppColors.blue500),
+              borderRadius: BorderRadius.circular(12),
+              style: const TextStyle(
+                color: AppColors.grey950,
+                fontFamily: 'Poppins',
+                fontSize: 18,
+                textBaseline: TextBaseline.ideographic,
+              )),
+        ),
+        const SizedBox(height: 32),
+        Row(
+          children: [
+            Expanded(
+              child: Buttons(
+                variant: Variante.secondary,
+                size: SizeButton.md,
+                msg: const Text("Cancel",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        fontFamily: 'Poppins')),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Buttons(
-                  variant: Variante.validate,
-                  size: SizeButton.md,
-                  msg: const Text("Add the task",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                          fontFamily: 'Poppins')),
-                  icon: const Icon(BootstrapIcons.x,
-                      color: AppColors.white, size: 32),
-                  onPressed: () {
-                    // Sending the task details to the server
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Buttons(
+                variant: Variante.validate,
+                size: SizeButton.md,
+                msg: const Text("Add the task",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        fontFamily: 'Poppins')),
+                onPressed: () {
+                  Logger().i(name);
+                  Logger().i(description);
+                  Logger().i(deadline);
+                  Logger().i(label);
+                  if (name != "" &&
+                      deadline != null &&
+                      label != '' &&
+                      label != '') {
                     putTodos({
                       'name': name,
                       'description': description,
                       'deadline': deadline!.toIso8601String(),
-                      'label': label
+                      'label': label,
+                      'status': status,
                     });
                     Navigator.pop(context);
-                  },
-                ),
+                  } else {
+                    Logger().e("Please fill all the fields");
+                  }
+                  widget.updateData(context);
+                },
               ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }
