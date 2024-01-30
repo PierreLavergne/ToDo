@@ -1,0 +1,5 @@
+target/
+Dockerfile
+.settings
+.project
+.env.example
