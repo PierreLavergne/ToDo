@@ -1,0 +1,41 @@
+generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("POSTGRES_URL")
+}
+
+model Todo {
+    id          String       @id @unique @default(uuid()) @db.Uuid
+    name        String       @unique
+    description String?
+    deadline    DateTime
+    label       TodoPriority
+    status      TodoStatus
+
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("todos")
+}
+
+enum TodoPriority {
+    Low
+    Medium
+    Important
+    Urgent
+
+    @@map("todo_priority")
+}
+
+enum TodoStatus {
+    Active
+    Pending
+    Done
+
+    @@map("todo_status")
+}

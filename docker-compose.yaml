@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - todos:/var/lib/postgresql/data
+
+  nest-api:
+    build:
+      dockerfile: Dockerfile
+      context: ./nest-api
+      target: production
+    env_file:
+      - ./nest-api/.env
+    ports:
+      - ${NEST_API_PORT}:8080
+    depends_on:
+      - postgres
+
+  java-api:
+    build:
+      dockerfile: Dockerfile
+      context: ./java-api
+      target: production
+    env_file:
+      - ./java-api/.env
+    ports:
+      - ${JAVA_API_PORT}:8080
+    depends_on:
+      - postgres
+
+volumes:
+  todos:
