@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_flutter/services/get_todos.dart';
 import '../styles/colors.dart';
 // ignore: depend_on_referenced_packages
 import 'package:bootstrap_icons/bootstrap_icons.dart';
@@ -12,9 +13,11 @@ class CardTask extends StatefulWidget {
   String title;
   String description;
   LabelType label;
-  DateTime? deadline;
-  String? status;
+  DateTime deadline;
+  String status;
   bool animate = true;
+  bool isJava;
+  String id;
 
   CardTask({
     super.key,
@@ -24,6 +27,8 @@ class CardTask extends StatefulWidget {
     required this.deadline,
     required this.animate,
     required this.status,
+    required this.id,
+    required this.isJava,
   });
 
   @override
@@ -175,7 +180,7 @@ class _CardTaskState extends State<CardTask> {
                                   size: 14, color: AppColors.grey600),
                               const SizedBox(width: 4),
                               Text(
-                                '${widget.deadline!.day}/${widget.deadline!.month}/${widget.deadline!.year}',
+                                '${widget.deadline.day}/${widget.deadline.month}/${widget.deadline.year}',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -200,6 +205,27 @@ class _CardTaskState extends State<CardTask> {
                     setState(() {
                       widget.status = value! ? 'Done' : 'Pending';
                     });
+                    putTodos({
+                      'id': widget.id,
+                      'name': widget.title,
+                      'description': widget.description,
+                      'label': widget.label
+                          .toString()
+                          .split('.')
+                          .last
+                          .toLowerCase()
+                          .replaceRange(
+                              0,
+                              1,
+                              widget.label
+                                  .toString()
+                                  .split('.')
+                                  .last
+                                  .toLowerCase()[0]
+                                  .toUpperCase()),
+                      'deadline': widget.deadline.toIso8601String(),
+                      'status': widget.status,
+                    }, widget.isJava);
                   }),
             ],
           ),

@@ -10,6 +10,8 @@ import 'package:todo_flutter/widgets/card_task.dart';
 import 'package:todo_flutter/widgets/field_custom.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
+bool isJava = false;
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -28,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchData(BuildContext context) async {
-    todos = await getTodos();
+    todos = await getTodos(isJava);
   }
 
   Future<void> updateData(BuildContext context) async {
@@ -53,6 +55,36 @@ class _HomePageState extends State<HomePage> {
                 fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
+          actions: [
+            const Text(
+              "Nest JS    ",
+              style: TextStyle(
+                  color: Color(0xFF353535),
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            Switch(
+              value: isJava,
+              onChanged: (value) {
+                setState(() {
+                  isJava = value;
+                });
+              },
+              activeTrackColor: AppColors.blue500,
+              activeColor: AppColors.blue500,
+            ),
+            const Text(
+              "    Java    ",
+              style: TextStyle(
+                  color: Color(0xFF353535),
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(32),
@@ -111,6 +143,8 @@ class _HomePageState extends State<HomePage> {
                             deadline: DateTime.parse(todos[index]['deadline']),
                             animate: true,
                             status: todos[index]['status'],
+                            id: todos[index]['id'],
+                            isJava: isJava,
                           );
                         },
                       ),
@@ -360,21 +394,17 @@ class _BodyModalState extends State<BodyModal> {
                         color: Colors.white,
                         fontFamily: 'Poppins')),
                 onPressed: () {
-                  Logger().i(name);
-                  Logger().i(description);
-                  Logger().i(deadline);
-                  Logger().i(label);
                   if (name != "" &&
                       deadline != null &&
                       label != '' &&
                       label != '') {
-                    putTodos({
+                    postTodos({
                       'name': name,
                       'description': description,
-                      'deadline': deadline!.toIso8601String(),
+                      'deadline': "${deadline!.toIso8601String()}+00:00",
                       'label': label,
                       'status': status,
-                    });
+                    }, isJava);
                     Navigator.pop(context);
                   } else {
                     Logger().e("Please fill all the fields");

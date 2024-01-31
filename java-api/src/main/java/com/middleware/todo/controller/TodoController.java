@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.middleware.todo.model.TodoModel;
 import com.middleware.todo.service.TodoService;
@@ -27,13 +28,14 @@ public class TodoController {
 	public TodoController(TodoService todoService) {
 		this.todoService = todoService;
 	}
-
+	
+	@CrossOrigin
 	@GetMapping
 	public Iterable<TodoModel> getAll() {
 		return todoService.getAll();
 	}
-
-	@PostMapping
+	@CrossOrigin
+	@PostMapping(consumes = {"application/json"})
 	public ResponseEntity<?> create(@Valid @RequestBody final TodoModel todo) {
 		try {
 			return new ResponseEntity<TodoModel>(todoService.create(todo), HttpStatus.CREATED);
@@ -44,8 +46,8 @@ public class TodoController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
-	@PutMapping
+	@CrossOrigin
+	@PutMapping(consumes = {"application/json"})
 	public ResponseEntity<?> updateByName(@Valid @RequestBody final TodoModel todo) {
 		try {
 			final TodoModel updatedTodo = todoService.update(todo);
@@ -59,7 +61,7 @@ public class TodoController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@CrossOrigin
 	@GetMapping("/{name}")
 	public ResponseEntity<?> getByName(@PathVariable final String name) {
 		try {
@@ -73,7 +75,7 @@ public class TodoController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@CrossOrigin
 	@DeleteMapping("/{name}")
 	public ResponseEntity<?> deleteByName(@PathVariable final String name) {
 		try {

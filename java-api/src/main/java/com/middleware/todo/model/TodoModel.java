@@ -35,7 +35,6 @@ public class TodoModel {
 
 	private String description;
 
-	@Future(message = "Date must be in the future")
 	private Date deadline;
 
 	@Enumerated(EnumType.STRING)

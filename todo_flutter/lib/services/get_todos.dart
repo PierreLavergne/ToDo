@@ -5,8 +5,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
-Future<List<Map<String, dynamic>>> getTodos() async {
-  final url = '${dotenv.env['URL']}/todos';
+Future<List<Map<String, dynamic>>> getTodos(bool isJava) async {
+  final url =
+      isJava ? '${dotenv.env['URLJAVA']}/todos' : '${dotenv.env['URL']}/todos';
   final response = await http.get(Uri.parse(url));
 
   if (response.statusCode == 200) {
@@ -17,10 +18,30 @@ Future<List<Map<String, dynamic>>> getTodos() async {
   }
 }
 
-Future<void> putTodos(Map<String, String> todo) async {
-  final url = '${dotenv.env['URL']}/todos';
-  final response = await http.post(Uri.parse(url), body: todo);
+Future<void> postTodos(Map<String, String> todo, bool isJava) async {
+  Logger().i(isJava);
+  Logger().i(todo);
+  final url =
+      isJava ? '${dotenv.env['URLJAVA']}/todos' : '${dotenv.env['URL']}/todos';
+  final response =
+      await http.post(Uri.parse(url), body: jsonEncode(todo), headers: {
+    'Content-Type': 'application/json; charset=UTF-8',
+  });
 
+  if (response.statusCode != 200) {
+    Logger().e(response.body);
+    throw Exception('Failed to update todo');
+  }
+}
+
+Future<void> putTodos(Map<String, String> todo, bool isJava) async {
+  Logger().i(isJava);
+  final url =
+      isJava ? '${dotenv.env['URLJAVA']}/todos' : '${dotenv.env['URL']}/todos';
+  final response =
+      await http.put(Uri.parse(url), body: jsonEncode(todo), headers: {
+    'Content-Type': 'application/json; charset=UTF-8',
+  });
   if (response.statusCode != 200) {
     Logger().e(response.body);
     throw Exception('Failed to update todo');
