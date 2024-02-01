@@ -23,8 +23,6 @@ services:
       - ${NEST_API_PORT}:8080
     depends_on:
       - postgres
-    networks:
-      - todos_network
 
   java-api:
     build:
@@ -43,7 +41,7 @@ services:
       dockerfile: Dockerfile
       context: ./todo_flutter
     env_file:
-      - ./todo_flutter/.env
+      - ./flutter-web/.env
     ports:
       - ${FLUTTER_WEB_PORT}:9000
     depends_on:
@@ -55,18 +53,12 @@ services:
       dockerfile: Dockerfile
       context: ./todo_react
     env_file:
-      - ./todo_react/.env
+      - ./react-web/.env
     ports:
       - ${REACT_WEB_PORT}:8080
     depends_on:
       - nest-api
       - java-api
-    networks:
-      - todos_network
 
 volumes:
   todos:
-
-networks:
-  todos_network:
-    driver: bridge
