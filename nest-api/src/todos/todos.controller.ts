@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,11 +7,11 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { TodosService } from './todos.service';
-import { TodoDTO } from './dto/todo.dto';
-import { Todo } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
+import { Todo } from '@prisma/client';
+import { TodoDTO } from './dto/todo.dto';
 import { UpdateTodoDTO } from './dto/update-todo.dto';
+import { TodosService } from './todos.service';
 
 @ApiTags('Todos')
 @Controller('todos')

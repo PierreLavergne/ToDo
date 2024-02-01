@@ -12,10 +12,9 @@ model Todo {
     id          String       @id @unique @default(uuid()) @db.Uuid
     name        String       @unique
     description String?
-    deadline    DateTime
+    deadline    DateTime     @db.Timestamp
     label       TodoPriority
     status      TodoStatus
-
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
