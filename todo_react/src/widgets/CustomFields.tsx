@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { ChangeEventHandler } from 'react';
 import '../styles/colors.css'; // Import your CSS file
 import '../styles/input.css'; // Import your CSS file
 
 interface InputProps {
   placeholder?: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: 'text' | 'date';
+  onChange?: ChangeEventHandler<HTMLInputElement>;
 }
 
-const Input: React.FC<InputProps> = ({  placeholder = '', onChange }) => {
+const Input: React.FC<InputProps> = ({  placeholder = '', type, onChange }) => {
 
 
   return (
@@ -15,6 +16,8 @@ const Input: React.FC<InputProps> = ({  placeholder = '', onChange }) => {
       className={`input`}
       placeholder={placeholder}
       onChange={onChange}
+      type={type}
+      
     />
   );
 };

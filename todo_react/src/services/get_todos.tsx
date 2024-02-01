@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 export const getTodos = async (isJava: boolean) => {
-    console.log(`${import.meta.env.URLJAVA}`);
-    const url = isJava ? `${import.meta.env.env.URLJAVA}/todos` : `${import.meta.env.env.URL}/todos`;
+    console.log(`${import.meta.env.VITE_URLJAVA}`);
+    const url = isJava ? `${import.meta.env.VITE_URLJAVA}/todos` : `${import.meta.env.VITE_URL}/todos`;
     try {
         const response = await axios.get(url);
         return response.data;
@@ -13,7 +13,8 @@ export const getTodos = async (isJava: boolean) => {
 };
 
 export const postTodos = async (todo: Record<string, string>, isJava: boolean) => {
-    const url = isJava ? `${import.meta.env.env.URLJAVA}/todos` : `${import.meta.env.env.URL}/todos`;
+    console.log(todo);
+    const url = isJava ? `${import.meta.env.VITE_URLJAVA}/todos` : `${import.meta.env.VITE_URL}/todos`;
     try {
         const response = await axios.post(url, todo, {
         headers: {
@@ -28,7 +29,7 @@ export const postTodos = async (todo: Record<string, string>, isJava: boolean) =
 };
 
 export const putTodos = async (todo: Record<string, string>, isJava: boolean) => {
-    const url = isJava ? `${import.meta.env.env.URLJAVA}/todos` : `${import.meta.env.env.URL}/todos`;
+    const url = isJava ? `${import.meta.env.VITE_URLJAVA}/todos` : `${import.meta.env.VITE_URL}/todos`;
     try {
         const response = await axios.put(url, todo, {
         headers: {
