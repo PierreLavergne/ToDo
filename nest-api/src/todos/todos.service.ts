@@ -2,12 +2,14 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
 import { Todo } from '@prisma/client';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TodoDTO } from './dto/todo.dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UpdateTodoDTO } from './dto/update-todo.dto';
 
 @Injectable()
@@ -70,13 +72,21 @@ export class TodosService {
       .then((todo: Todo) => {
         return todo;
       })
-      .catch((err: PrismaClientKnownRequestError) => {
-        if (err.code === 'P2002') {
-          throw new BadRequestException(`${todo.name} already exist`);
-        } else if (err.code === 'P2023') {
-          throw new BadRequestException(`Invalid ID: ${todo.id}`);
-        } else if (err.code === 'P2025') {
-          throw new BadRequestException(`${todo.name} do not exist`);
+      .catch((err) => {
+        if (err instanceof PrismaClientValidationError) {
+          throw new BadRequestException(
+            'Invalid deadline format. Expected ISO-8601',
+          );
+        }
+        if (err instanceof PrismaClientKnownRequestError) {
+          switch (err.code) {
+            case 'P2002':
+              throw new BadRequestException(`${todo.name} already exist`);
+            case 'P2023':
+              throw new BadRequestException(`Invalid ID: ${todo.id}`);
+            case 'P2025':
+              throw new BadRequestException(`$${todo.name} do not exist`);
+          }
         }
         throw new InternalServerErrorException();
       });
