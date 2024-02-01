@@ -9,7 +9,8 @@
         border-color: var(--blue-500);
     }
     color: var(--black);
-    width: -webkit-fill-available;
+        width: -moz-available,
+        -webkit-fill-available;
 }
 
 .input:focus {
