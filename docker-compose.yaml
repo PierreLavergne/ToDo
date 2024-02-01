@@ -36,5 +36,15 @@ services:
     depends_on:
       - postgres
 
+  flutter-web:
+    build:
+      dockerfile: Dockerfile
+      context: ./todo_flutter
+    ports:
+      - ${FLUTTER_WEB_PORT}:9000
+    depends_on:
+      - nest-api
+      - java-api
+
 volumes:
   todos:
