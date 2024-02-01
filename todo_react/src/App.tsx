@@ -32,9 +32,9 @@ const customStyles = {
     padding: '12px',
     minWidth: '40vw',
     display: 'flex',
-    flexDirection: 'column',
     gap: '8px',
-  },
+    flexDirection: 'column',
+  } as const,
 };
 
 
@@ -115,6 +115,10 @@ function App() {
             </label>
             <div className='buttonDiv'>
               <Button variant="validate" size='customSm' onClick={() => {
+                if (title === '' || label === '' || deadline === '' || status === '') {
+                  alert('Please fill all the fields');
+                  return;
+                }
                 postTodos({
                   name: title,
                   description: description,
