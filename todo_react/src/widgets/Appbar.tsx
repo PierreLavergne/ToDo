@@ -2,7 +2,11 @@ import '../styles/colors.css'; // Import your CSS file
 import '../styles/appbar.css'; // Import your CSS file
 import Switch from './Switch';
 
-const AppBar: React.FC = () => {
+interface AppBarProps {
+  onChange: CallableFunction;
+}
+
+const AppBar: React.FC<AppBarProps> = ({onChange}) => {
 
   return (
     <header className="app-bar">
@@ -14,7 +18,9 @@ const AppBar: React.FC = () => {
           Nest JS
         </p>
         <label>
-            <Switch />
+            <Switch onChange={() => {
+              onChange();
+            }} />
         </label>
         <p style={{ color: 'var(--grey-950)', fontFamily: 'Poppins', fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>
           Java

@@ -10,7 +10,7 @@ import { getTodos, postTodos } from './services/get_todos'
 import { LabelType } from './widgets/cardTask'
 
 type Task = {
-  title: string;
+  name: string;
   description: string;
   label: string;
   deadline: string;
@@ -40,18 +40,17 @@ const customStyles = {
 
 function App() {
   const [todos, setTodos,] = useState<Task[]>([]);
-  const [isJava] = useState(false); // ou true, selon vos besoins
+  const [isJava, setIsJava] = useState(false); // ou true, selon vos besoins
   const [modalIsOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [label, setLabel] = useState('');
+  const [label, setLabel] = useState('Low');
   const [deadline, setDeadline] = useState('');
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState('Pending');
 
   function openModal() {
     setIsOpen(true);
   }
-
 
   function closeModal() {
     setIsOpen(false);
@@ -62,14 +61,22 @@ function App() {
       const todos = await getTodos(isJava);
       console.log(todos);
       setTodos(todos);
+
     }
 
     fetchTodos();
   }, [isJava]);
 
+  
+
   return (
     <div className="App">
-      <AppBar />
+      <AppBar onChange={
+        () => {
+          setTodos([]);
+          setIsJava(!isJava);
+        }
+      } />
       <header className="App-header">
         <Button variant="primary" size="customSm" onClick={
           () => {
@@ -128,13 +135,18 @@ function App() {
                 }, isJava);
                 closeModal();
                 todos.push({
-                  title: title,
+                  name: title,
                   description: description,
                   label: label,
                   deadline: deadline + 'T00:00:00.000Z', // attention à bien formater la date pour l'envoyer au back
                   status: status,
                   id: '0',
                 });
+                setTitle('');
+                setDescription('');
+                setLabel('Low');
+                setDeadline('');
+                setStatus('Pending');
               }}>Submit</Button>
               <Button variant="primary" size="customSm" onClick={ closeModal }>Cancel</Button>
             </div>
@@ -163,7 +175,7 @@ function App() {
           return (
             <CardTask
               key={index}
-              title={todo.title as string}
+              title={todo.name as string}
               description={todo.description as string}
               label={label}
               deadline={new Date(todo.deadline)}

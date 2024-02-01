@@ -2,11 +2,17 @@ import React, { useState } from 'react';
 import '../styles/colors.css';
 import '../styles/switch.css';
 
-const Switch: React.FC = () => {
+interface SwitchProps {
+    onChange: CallableFunction;
+}
+
+
+const Switch: React.FC<SwitchProps> = ({onChange}) => {
     const [isOn, setIsOn] = useState(false);
 
     const toggleSwitch = () => {
         setIsOn(!isOn);
+        onChange();
     };
 
     return (
