@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   postgres:
     image: postgres:latest
@@ -23,6 +23,8 @@ services:
       - ${NEST_API_PORT}:8080
     depends_on:
       - postgres
+    networks:
+      - todos_network
 
   java-api:
     build:
@@ -40,11 +42,31 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./todo_flutter
+    env_file:
+      - ./todo_flutter/.env
     ports:
       - ${FLUTTER_WEB_PORT}:9000
     depends_on:
       - nest-api
       - java-api
 
+  react-web:
+    build:
+      dockerfile: Dockerfile
+      context: ./todo_react
+    env_file:
+      - ./todo_react/.env
+    ports:
+      - ${REACT_WEB_PORT}:8080
+    depends_on:
+      - nest-api
+      - java-api
+    networks:
+      - todos_network
+
 volumes:
   todos:
+
+networks:
+  todos_network:
+    driver: bridge

@@ -12,12 +12,9 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @Entity
