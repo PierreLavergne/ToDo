@@ -1,0 +1,8 @@
+.app-bar {
+    background-color: transparent;
+    display: flex;
+    width: 98%;
+    margin: 0 auto;
+    justify-content: space-between;
+    align-items: center;
+}

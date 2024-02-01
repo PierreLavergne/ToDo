@@ -1,0 +1,22 @@
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-width: 100vw;
+    font-family: sans-serif;
+    text-align: center;
+    background-color: #FFF2F4F3;
+    color: white;
+}
+
+.App-header {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    font-size: 14px;
+    color: white;
+    padding: 1em;
+    gap: 4px;
+}

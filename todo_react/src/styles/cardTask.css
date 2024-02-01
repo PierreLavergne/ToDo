@@ -1,0 +1,100 @@
+.card-task {
+    padding: 8px;
+    border: 1px solid var(--grey-400);
+    border-radius: 10px;
+    background-color: var(--white);
+    width: 96%;
+}
+
+.card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.task-title,
+.task-description {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    margin: 0;
+}
+
+.task-title {
+    font-size: 18px;
+    color: var(--grey-800);
+}
+
+.task-title.done {
+    text-decoration: line-through;
+}
+
+.task-description {
+    font-size: 12px;
+    color: var(--grey-600);
+}
+
+.task-description.done {
+    text-decoration: line-through;
+}
+
+.task-metadata {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.task-label {
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 8px;
+    font-weight: 600;
+    color: var(--grey-600);
+    background-color: var(--green-100);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.task-label.medium {
+    background-color: var(--blue-100);
+}
+
+.task-label.important {
+    background-color: var(--orange-100);
+}
+
+.task-label.urgent {
+    background-color: var(--red-100);
+}
+
+.task-deadline {
+    display: flex;
+    align-items: center;
+    color: var(--grey-600);
+    font-size: 8px;
+    border-radius: 10px;
+    padding: 4px 8px;
+    background-color: var(--grey-100);
+}
+
+.bi {
+    font-size: 14px;
+}
+
+.checkbow {
+    color: var(--grey-600);
+    font-size: 14px;
+    border: 1px solid var(--grey-400);
+    border-radius: 50%;
+}
+
+.bi .bi-calendar {
+    color: var(--grey-600);
+    font-size: 14px;
+}
