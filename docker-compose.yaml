@@ -39,7 +39,7 @@ services:
   flutter-web:
     build:
       dockerfile: Dockerfile
-      context: ./todo_flutter
+      context: ./flutter-web
     env_file:
       - ./flutter-web/.env
     ports:
@@ -51,7 +51,7 @@ services:
   react-web:
     build:
       dockerfile: Dockerfile
-      context: ./todo_react
+      context: ./react-web
     env_file:
       - ./react-web/.env
     ports:

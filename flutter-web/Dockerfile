@@ -29,4 +29,4 @@ EXPOSE 9000
 
 RUN ["chmod", "+x", "/app/server/server.sh"]
 
-ENTRYPOINT [ "/app/server/server.sh"]
+CMD [ "/bin/bash", "/app/server/server.sh"]
